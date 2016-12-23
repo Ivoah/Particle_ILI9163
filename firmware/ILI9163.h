@@ -69,6 +69,8 @@
 #define ILI9163_CMD_GAM_R_SEL                0xF2
 #include <stdint.h>
 
+#define rgb(r, g, b) ((((b)>>3) << 11) | (((g)>>2) << 5) | ((r)>>3))
+
 class ILI9163 {
     private:
         uint8_t init_sequence[83]  = {
@@ -99,7 +101,6 @@ class ILI9163 {
 
     public:
         uint8_t buffer[ILI9163_WIDTH * ILI9163_HEIGHT * 2] = {0};
-        uint16_t rgb(uint8_t r, uint8_t g, uint8_t b) {return ((b>>3) << 11) | ((g>>2) << 5) | (r>>3);}
         ILI9163(int _cs, int _rst, int _a0);
         void fill(uint16_t color);
         void draw_pixel(uint8_t x, uint8_t y, uint16_t color);
