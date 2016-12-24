@@ -69,7 +69,7 @@
 #define ILI9163_CMD_GAM_R_SEL                0xF2
 #include <stdint.h>
 
-#define rgb(r, g, b) ((((b)>>3) << 11) | (((g)>>2) << 5) | ((r)>>3))
+#define rgb(r, g, b) (((((uint8_t)b)>>3) << 11) | ((((uint8_t)g)>>2) << 5) | (((uint8_t)r)>>3))
 
 class ILI9163 {
     private:
