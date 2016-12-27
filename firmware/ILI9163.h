@@ -2,6 +2,7 @@
 #define _ILI9163_
 
 #include <stdint.h>
+#include "application.h"
 
 #define ILI9163_WIDTH  128
 #define ILI9163_HEIGHT 128
@@ -67,11 +68,10 @@
 #define ILI9163_CMD_POSITIVE_GAMMA_CORRECT   0xE0
 #define ILI9163_CMD_NEGATIVE_GAMMA_CORRECT   0xE1
 #define ILI9163_CMD_GAM_R_SEL                0xF2
-#include <stdint.h>
 
 #define rgb(r, g, b) (((((uint8_t)b)>>3) << 11) | ((((uint8_t)g)>>2) << 5) | (((uint8_t)r)>>3))
 
-class ILI9163 {
+class ILI9163 : public Print {
     private:
         uint8_t init_sequence[83]  = {
             0xff, ILI9163_CMD_SET_PIXEL_FORMAT, 0x05,
@@ -94,6 +94,9 @@ class ILI9163 {
 
         int cs, rst, a0;
 
+        uint8_t cursor_x, cursor_y;
+        uint16_t fg_color, bg_color;
+
         void write_command(uint8_t cmd);
         void write_data(uint8_t data);
         void write_data16(uint16_t data);
@@ -106,6 +109,11 @@ class ILI9163 {
         void draw_pixel(uint8_t x, uint8_t y, uint16_t color);
         void draw_circle(int16_t x0, int16_t y0, int16_t r, uint16_t color);
         void draw_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
+        void clear();
+        void draw_char(uint8_t x, uint8_t y, char c, uint16_t col, uint16_t bg);
+        virtual size_t write(uint8_t c);
+        void set_cursor(uint8_t x, uint8_t y);
+        void set_color(uint16_t fg, uint16_t bg);
         void copy_buffer();
 };
 

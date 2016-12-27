@@ -1,4 +1,5 @@
 #include "ILI9163.h"
+#include "glcdfont.cpp"
 #include <stdint.h>
 #include "application.h"
 
@@ -43,6 +44,13 @@ ILI9163::ILI9163(int _cs, int _rst, int _a0) {
     cs = _cs;
     rst = _rst;
     a0 = _a0;
+
+    cursor_x = 0;
+    cursor_y = 0;
+
+    fg_color = rgb(255, 255, 255);
+    bg_color = fg_color;
+
     SPI.begin(cs); // Start SPI
     SPI.setBitOrder(MSBFIRST);
 
@@ -155,6 +163,57 @@ void ILI9163::draw_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t
             err += dx;
         }
     }
+}
+
+void ILI9163::clear() {
+    fill(rgb(0, 0, 0));
+    set_cursor(0, 0);
+}
+
+void ILI9163::draw_char(uint8_t x, uint8_t y, char c, uint16_t col, uint16_t bg) {
+    if(x >= ILI9163_WIDTH || y >= ILI9163_HEIGHT || (x + 5) < 0 || (y + 7) < 0)
+        return;
+
+    for(int8_t i = 0; i < 6; i++ ) {
+        uint8_t line;
+        if(i < 5) line = pgm_read_byte(font+(c*5)+i);
+        else      line = 0x0;
+        for(int8_t j = 0; j < 8; j++, line >>= 1) {
+            if(line & 0x1) {
+                draw_pixel(x+i, y+j, col);
+            } else if(bg != col) {
+                draw_pixel(x+i, y+j, bg);
+            }
+        }
+    }
+}
+
+size_t ILI9163::write(uint8_t c) {
+    if (c == '\n') {
+        cursor_y += 8;
+        cursor_x = 0;
+    } else if (c == '\r') {
+        // skip em
+    } else {
+        if((cursor_x + 6) >= ILI9163_WIDTH) { // Heading off edge?
+            cursor_x = 0;            // Reset x to zero
+            cursor_y += 8; // Advance y one line
+        }
+        draw_char(cursor_x, cursor_y, c, fg_color, bg_color);
+        cursor_x += 6;
+    }
+
+    return 1;
+}
+
+void ILI9163::set_cursor(uint8_t x, uint8_t y) {
+    cursor_x = x;
+    cursor_y = y;
+}
+
+void ILI9163::set_color(uint16_t fg, uint16_t bg) {
+    fg_color = fg;
+    bg_color = bg;
 }
 
 void ILI9163::copy_buffer() {
