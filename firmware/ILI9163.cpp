@@ -1,7 +1,7 @@
 #include "ILI9163.h"
 #include "glcdfont.cpp"
 #include <stdint.h>
-#include "application.h"
+#include "Particle.h"
 
 #define _swap_int16_t(a, b) { int16_t t = a; a = b; b = t; }
 

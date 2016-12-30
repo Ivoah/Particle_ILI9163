@@ -2,7 +2,7 @@
 #define _ILI9163_
 
 #include <stdint.h>
-#include "application.h"
+#include "Particle.h"
 
 #define ILI9163_WIDTH  128
 #define ILI9163_HEIGHT 128
