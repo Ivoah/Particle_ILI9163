@@ -1,7 +1,0 @@
-{
-    "name": "ILI9163",
-    "version": "0.0.1",
-    "author": "Noah Rosamilia <ivoahivoah@gmail.com>",
-    "license": "MIT",
-    "description": "ILI9163 display driver"
-}
